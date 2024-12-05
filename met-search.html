@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" src="./met-search.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Met museum and whatnot</h1>
+    </header>
+    <main>
+      <div id="search-area">
+        <form id="search-form" action="">
+          <div role="search">
+            <label class="search-label" for="search"
+              >Search the met collection
+              <p id="error" role="alert"></p>
+            </label>
+            <input id="search" class="search-input" type="text" />
+            <input class="button" type="submit" value="Search" />
+          </div>
+        </form>
+      </div>
+      <div id="results">show results here</div>
+      <div id="favorites">
+        build a slider of favorite/saved items; save this to browser data
+        storage
+      </div>
+    </main>
+    <script src="./met-state.js"></script>
+    <script src="./api-client.js"></script>
+    <script src="./met-search.js"></script>
+  </body>
+</html>
