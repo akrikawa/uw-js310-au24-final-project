@@ -32,7 +32,7 @@ const request = async (path) => {
 };
 
 const getSearchResults = (queryParams) => {
-  const path = `search?q=${queryParams}`;
+  const path = `search?hasImages=true&q=${queryParams}`;
   return request(path);
 };
 
