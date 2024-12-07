@@ -36,6 +36,7 @@ class State extends Subject {
   }
 
   update(data = {}) {
+    // Reference for Object.assign() - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
     this.state = Object.assign(this.state, data);
     this.notify(this.state);
   }

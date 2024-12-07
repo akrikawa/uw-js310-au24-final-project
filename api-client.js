@@ -17,6 +17,7 @@ const request = async (path) => {
     // Check to see if the response is ok.
     if (response.ok) {
       // Fetch promise resolved and we can continue grabbing data from the response.
+      // console.log(data);
       return data;
     } else {
       // Fetch promise resolved but there a failed HTTP status (aka not 'ok').
