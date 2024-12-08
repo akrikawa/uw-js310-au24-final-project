@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <link rel="stylesheet" src="./met-search.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./met-search.css" />
   </head>
-  <body>
-    <header>
+  <body class="app">
+    <header class="header">
       <h1>Met museum and whatnot</h1>
     </header>
     <main>
-      <div id="app">
+      <div id="app" class="wrapper">
         <div id="search-area">
           <form id="search-form" action="">
             <div role="search">
@@ -23,11 +24,19 @@
         </div>
         <div id="search-results">
           <div id="counter">show counter here here</div>
-          <div id="results-container">Show the results here</div>
+          <div id="current-result-set"></div>
           <div id="pager-controls">
-            <button id="prev">Previous</button>
-            <button id="next">Next</button>
+            <button id="prev" disabled>Previous</button>
+            <select id="pager-step">
+              <option name="5" value="5" selected>5</option>
+              <option name="10" value="10">10</option>
+              <option name="25" value="25">25</option>
+              <option name="50" value="50">50</option>
+              <option name="100" value="100">100</option>
+            </select>
+            <button id="next" disabled>Next</button>
           </div>
+          <div id="results-container">Show the results here</div>
         </div>
         <div id="favorites">
           build a slider of favorite/saved items; save this to browser data

@@ -5,7 +5,8 @@ const searchForm = document.getElementById('search-form');
 const resultsEl = document.getElementById('results');
 const pagerNextButton = document.getElementById('next');
 const pagerPrevButton = document.getElementById('prev');
-const PAGER_STEP = 5;
+// const PAGER_STEP = 5;
+const pagerStepSelect = document.getElementById('pager-step');
 // application state.
 const appState = new State();
 
@@ -15,55 +16,47 @@ const appState = new State();
     pagerIndexStart
     pagerIndexEnd
     metObjectDataToRender - the MET object data for a batch of objects ready to render
+    currentFirstItemInView
+    loadingResults: true/false
   */
 
 // Set up initial state.
 appState.update({
   recentSearchResults: [],
   pagerIndexStart: 0,
-  pagerIndexEnd: PAGER_STEP,
+  pagerIndexEnd: 5,
+  pagerStep: 5,
+  currentFirstItemInView: 0,
   metObjectDataToRender: [],
   loadingResults: false,
 });
 
-console.log('appState line10', appState);
-
-const clearSearchResults = () => {
-  const state = appState.get();
-  let current = [...state.metObjectDataToRender];
-  current = [];
-  debugger;
-  appState.update({
-    // ...state,
-    metObjectDataToRender: current,
-  });
-};
+// console.log('appState line10', appState);
 
 // Calls the api-client running the search endpoint.
 // Takes resultant objectIDs and stores them in application state.
-const searchAndStore = async (queryParams = 'sunflower') => {
+const searchAndStore = async (queryParams = 'degas') => {
   const state = appState.get();
-  // const recentSearchResults = [...state.recentSearchResults];
+  // Clear recent search results.
+  appState.update({ recentSearchResults: [] });
+  appState.update({ metObjectDataToRender: [{}] });
   await getSearchResults(queryParams).then((res) => {
     appState.update({
-      ...state,
       recentSearchResults: res.objectIDs,
       pagerIndexStart: 0,
-      pagerIndexEnd: PAGER_STEP,
+      pagerIndexEnd: state.pagerStep,
     });
   });
-  pagerResults();
-  // return data;
-  // Test this.
-  // appState.update({ metObjectDataToRender: true });
+  await pagerResults();
 };
 
 // Pager. Build a pager function that goes and gets the data for the next 20
 // MET Object IDs. Stores the data in state.
 const pagerResults = async () => {
-  const start = appState.get().pagerIndexStart;
-  const end = appState.get().pagerIndexEnd;
-  const recentSearchResults = appState.get().recentSearchResults;
+  const state = appState.get();
+  const start = state.pagerIndexStart;
+  const end = state.pagerIndexEnd;
+  const recentSearchResults = state.recentSearchResults;
   const total = recentSearchResults.length;
   // const state = appState.get();
   appState.update({ loading: true });
@@ -74,13 +67,15 @@ const pagerResults = async () => {
     let objectIDsToRender = recentSearchResults.slice(start, end);
     try {
       const data = await getBatchOfObjectData(objectIDsToRender);
-      console.log(data);
+      // console.log(data);
       appState.update({
         metObjectDataToRender: data,
         loading: false,
       });
+      setPagers();
     } catch (e) {
       console.log('error', e);
+      showErrorMessage(e);
     }
   } else {
     console.log(
@@ -95,7 +90,8 @@ const getSingleObjectData = async (objectID) => {
     // console.log(response);
     return response;
   } catch (e) {
-    console.log('There was an error.', e);
+    console.log('There was an error getting one of the Met objects.', e);
+    showErrorMessage(e);
   }
   // return returnObject.isPublicDomain ? returnObject : false;
 };
@@ -113,8 +109,34 @@ const showErrorMessage = (e) => {
   resultsEl.innerHTML = `<div class="alert alert-danger"><h3>An error occurred</h3><p>${e}<p></div>`;
 };
 
+// Sets the pager buttons to disabled or enabled.
+const setPagers = () => {
+  const state = appState.get();
+  const start = state.pagerIndexStart;
+  const end = state.pagerIndexEnd;
+  const total = state.recentSearchResults.length;
+  const pagerStep = state.pagerStep;
+
+  // If paging forward is possible. We have a total for length,
+  // so we have recentSearchResults and our starting point for the current
+  // paged view + the PAGER_STEP is less than the total, then we have room
+  // to advance forward.
+  // Next button.
+  if (total && start + pagerStep <= total) {
+    pagerNextButton.removeAttribute('disabled');
+  } else {
+    pagerNextButton.setAttribute('disabled', true);
+  }
+  // Previous button.
+  if (total && start - (pagerStep - 1) > 0) {
+    pagerPrevButton.removeAttribute('disabled');
+  } else {
+    pagerPrevButton.setAttribute('disabled', true);
+  }
+};
 // const searchResults = new SearchResults();
 const resultsContainer = new ResultsContainer();
+// const resultsCard = new ResultsCard();
 
 // Subscribe to observer.
 // appState.subscribe(searchResults);
@@ -131,16 +153,34 @@ searchForm.addEventListener('submit', (e) => {
   const state = appState.get();
   appState.update({ ...state, recentSearchResults: [] });
   searchAndStore(searchInput.value);
-  pagerResults();
+  pageAndRender('next');
 });
 
-pagerNextButton.addEventListener('click', (e) => {
-  console.log('next button event');
+pagerStepSelect.addEventListener('change', (e) => {
+  appState.update({ pagerStep: e.target.value });
+});
+
+pagerNextButton.addEventListener('click', () => {
+  // console.log('next button event');
+  pageAndRender('next');
+});
+
+pagerPrevButton.addEventListener('click', () => {
+  // console.log('next button event');
+  pageAndRender('prev');
+});
+
+const pageAndRender = (direction) => {
   const state = appState.get();
   appState.update({
-    ...state,
-    pagerIndexStart: state.pagerIndexStart + PAGER_STEP,
-    pagerIndexEnd: state.pagerIndexEnd + PAGER_STEP,
+    pagerIndexStart:
+      direction === 'next'
+        ? state.pagerIndexStart + state.pagerStep
+        : state.pagerIndexStart - state.pagerStep,
+    pagerIndexEnd:
+      direction === 'next'
+        ? state.pagerIndexEnd + state.pagerStep
+        : state.pagerIndexEnd - state.pagerStep,
   });
   pagerResults();
-});
+};

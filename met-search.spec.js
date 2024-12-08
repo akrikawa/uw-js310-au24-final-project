@@ -43,7 +43,7 @@ describe('getSingleObjectData: which calls API call - for single MET object', fu
   });
 });
 
-describe('getBatchOfObjectData: fdsfdafdsfdafdsfsdf', function () {
+describe('getBatchOfObjectData: get a batch of Met Objects and check results', function () {
   beforeEach(async function () {
     let idsToGet = [436135, 436155, 438817, 436121, 436144, 436162];
     returnvalue = await getBatchOfObjectData(idsToGet);
@@ -59,5 +59,22 @@ describe('getBatchOfObjectData: fdsfdafdsfdafdsfsdf', function () {
   it('figure out how to access returned item', function () {
     let objectID = returnvalue[0].objectID;
     expect(objectID).toEqual(436135);
+  });
+});
+
+describe('setPagers: check logic for the prev and next buttons', function () {
+  beforeEach(async function () {
+    await searchAndStore('degas');
+  });
+
+  it('previous should be disabled, next should be enabled', function () {
+    // appState.update({
+    //   pagerIndexEnd: 10,
+    //   pagerIndexStart: 0,
+    //   // recentSearchResults: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 11, 12],
+    // });
+    setPagers();
+    //expect(submitEl.nativeElement.querySelector('button').disabled).toBeTruthy();
+    expect(pagerPrevButton.disabled).toBeTruthy();
   });
 });

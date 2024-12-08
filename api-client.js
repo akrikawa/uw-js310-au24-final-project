@@ -25,6 +25,7 @@ const request = async (path) => {
     }
   } catch (e) {
     console.log('Error getting data from the API.', e);
+    showErrorMessage(e);
     // Send this error to the DOM.
     // showErrorMessage(e);
   } finally {
@@ -38,6 +39,6 @@ const getSearchResults = (queryParams) => {
 };
 
 const getObjectResults = (objectID) => {
-  const path = `objects/${objectID}`;
+  const path = `objects/${objectID}?isPublicDomain=true`;
   return request(path);
 };
