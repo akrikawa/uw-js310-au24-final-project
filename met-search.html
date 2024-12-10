@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MET Art finder 4000</title>
     <link rel="stylesheet" href="./met-search.css" />
   </head>
   <body class="app">
@@ -11,20 +12,23 @@
     <main>
       <div id="app" class="wrapper">
         <div id="search-area">
-          <form id="search-form" action="">
-            <div role="search">
-              <label class="search-label" for="search"
-                >Search the met collection
-                <p id="error" role="alert"></p>
-              </label>
-              <input id="search" class="search-input" type="text" />
-              <input class="button" type="submit" value="Search" />
-            </div>
+          <form id="search-form" class="search" action="">
+            <label class="search-label" for="search"
+              >Search the MET collection
+            </label>
+            <input
+              id="search"
+              class="search-input"
+              type="search"
+              placeholder="enter search term(s)..."
+            />
+            <input class="button" type="submit" value="Search" />
+            <small id="error" role="alert" class="validate"></small>
           </form>
         </div>
         <div id="search-results">
+          <div id="messages"></div>
           <div id="counter">show counter here here</div>
-          <div id="current-result-set"></div>
           <div id="pager-controls">
             <button id="prev" disabled>Previous</button>
             <select id="pager-step">
@@ -38,10 +42,7 @@
           </div>
           <div id="results-container">Show the results here</div>
         </div>
-        <div id="favorites">
-          build a slider of favorite/saved items; save this to browser data
-          storage
-        </div>
+        <div id="favorites"></div>
       </div>
     </main>
     <script src="./met-state.js"></script>

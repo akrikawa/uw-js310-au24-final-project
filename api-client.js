@@ -5,9 +5,6 @@
 /* Search: https://collectionapi.metmuseum.org/public/collection/v1/search */
 // Constants.
 const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
-const OBJECT_STUB = 'objects/';
-const DEPT_STUB = 'departments/';
-const SEARCH = 'search';
 
 const request = async (path) => {
   let url = BASE_URL + path;
@@ -21,7 +18,15 @@ const request = async (path) => {
       return data;
     } else {
       // Fetch promise resolved but there a failed HTTP status (aka not 'ok').
-      throw new Error(response.status);
+      console.log(response);
+      if (response.status === 404) {
+        throw new Error(
+          `There was a ${response.status} error of ${response.statusText} when trying to get ${response.url}.`
+        );
+      } else {
+        throw new Error(response.status);
+      }
+      // showErrorMessage(e);
     }
   } catch (e) {
     console.log('Error getting data from the API.', e);
@@ -34,11 +39,11 @@ const request = async (path) => {
 };
 
 const getSearchResults = (queryParams) => {
-  const path = `search?hasImages=true&q=${queryParams}`;
+  const path = `search?hasImages=true&isPublicDomain=true&q=${queryParams}`;
   return request(path);
 };
 
 const getObjectResults = (objectID) => {
-  const path = `objects/${objectID}?isPublicDomain=true`;
+  const path = `objects/${objectID}`;
   return request(path);
 };

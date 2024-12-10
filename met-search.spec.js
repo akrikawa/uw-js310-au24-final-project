@@ -1,14 +1,3 @@
-// const searchForm = document.getElementById('search-form');
-// Tests go in here.
-// describe('API test', function () {
-//   let idToGet = 196473;
-//   const test = getObjectResults(idToGet);
-
-//   it('contains a spec with an expectation', function () {
-//     expect(test).toEqual(true);
-//   });
-// });
-
 describe('API call: for single MET object', function () {
   beforeEach(async function () {
     let idToGet = 196473;
@@ -20,10 +9,34 @@ describe('API call: for single MET object', function () {
     // expect(objectID).toEqual(196473);
     expect(whatType).toEqual('object');
   });
+
   it('getObjectResults - Returns objectID matching that passed in', function () {
     let objectID = value.objectID;
     expect(objectID).toEqual(196473);
   });
+});
+
+// Handle errors with API.
+describe('API call: handle an error from MET API call', function () {
+  beforeEach(async function () {
+    let idBadToGet = 699803;
+
+    const userMessages = document.getElementById('messages');
+    value = await cleanDataSet([idBadToGet]);
+    // .then((data) =>
+    //   getBatchOfObjectData(data)
+    // );
+  });
+  // console.log(value);
+  it('handles failure for an item an Object', function () {
+    let whatType = typeof value;
+    expect(objectID).toEqual('0');
+    // expect(whatType).toEqual('object');
+  });
+  // it('getObjectResults - Returns objectID matching that passed in', function () {
+  //   let objectID = value.objectID;
+  //   expect(objectID).toEqual(196473);
+  // });
 });
 
 describe('getSingleObjectData: which calls API call - for single MET object', function () {
@@ -37,6 +50,7 @@ describe('getSingleObjectData: which calls API call - for single MET object', fu
     // expect(objectID).toEqual(196473);
     expect(whatType).toEqual('object');
   });
+
   it('getObjectResults - Returns objectID matching that passed in', function () {
     let objectID = value.objectID;
     expect(objectID).toEqual(196473);
@@ -62,19 +76,13 @@ describe('getBatchOfObjectData: get a batch of Met Objects and check results', f
   });
 });
 
-describe('setPagers: check logic for the prev and next buttons', function () {
+describe('setPagers: check logic for pager functions', function () {
   beforeEach(async function () {
     await searchAndStore('degas');
   });
 
-  it('previous should be disabled, next should be enabled', function () {
-    // appState.update({
-    //   pagerIndexEnd: 10,
-    //   pagerIndexStart: 0,
-    //   // recentSearchResults: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 11, 12],
-    // });
-    setPagers();
-    //expect(submitEl.nativeElement.querySelector('button').disabled).toBeTruthy();
-    expect(pagerPrevButton.disabled).toBeTruthy();
+  it('at first load pagerIndexEnd should equal pagerStep', function () {
+    const state = appState.get();
+    expect(state.pagerIndexEnd).toEqual(state.pagerStep);
   });
 });

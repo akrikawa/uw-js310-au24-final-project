@@ -1,20 +1,28 @@
-// The search results component area.
-class SearchResults extends Observer {
+// The search counter component.
+class SearchCounter extends Observer {
   buildMarkup(state) {
-    return `<p>I will put data here when you write the code to do it.</p>`;
+    if (state.metObjectDataToRender.length > 0 && !state.loading) {
+      let total = state.recentSearchResults.length;
+      return `<p>Viewing ${state.currentFirstItemInView + 1} through ${
+        state.currentLastItemInView
+      } of <strong>${total}</strong> results found. </p>`;
+    } else {
+      return ``;
+    }
   }
 
-  render(state, selector = 'app') {
+  render(state, selector = 'search-results') {
     const markup = this.buildMarkup(state);
     const parent = document.getElementById(selector);
     parent.innerHTML = markup;
   }
 
   update(state) {
-    this.render(state, 'search-results');
+    this.render(state, 'counter');
   }
 }
 
+// The search results component area.
 class ResultsContainer extends Observer {
   buildMarkup(state) {
     // console.log('state here', state);
@@ -22,12 +30,6 @@ class ResultsContainer extends Observer {
       'Inside ResultsContainer and buildMarkup has been called: ',
       state.metObjectDataToRender
     );
-    // state.metObjectDataToRender.map((object) => {
-    //   console.log(object.title);
-    // });
-    // return `<p>results container here.</p>`;
-    // ${state.users.map(user => `<li>${user.name}</li>`).join("\n")}
-
     if (state.loading) {
       return 'loading data....';
     } else {
@@ -36,21 +38,23 @@ class ResultsContainer extends Observer {
           (metObject) =>
             `<li class="result" id=${metObject.objectID}>
               <div class="card">
-              <strong>${metObject.title}</strong><br>${metObject.objectID}<br>
+              <img src=${
+                metObject.isPublicDomain
+                  ? metObject.primaryImageSmall
+                  : `https://placehold.co/300x400?text=Image%20not%20available%20from%20API&font=Lato`
+              } alt=${metObject.title} />
+                <div class="card-body">
+                <strong>${metObject.title}</strong><br>${metObject.objectID}<br>
               ${metObject.artistDisplayName}<br/>
-            <img src=${
-              metObject.isPublicDomain
-                ? metObject.primaryImageSmall
-                : `https://placehold.co/300x400?text=Image%20not%20available%20from%20API&font=Lato`
-            } alt=${metObject.title} />
-           </div>
+                </div>
+             </div>
           </li>`
         )
         .join('\n')}
     </ul>`;
     }
   }
-  render(state, selector = 'current-result-set') {
+  render(state, selector = 'search-results') {
     const markup = this.buildMarkup(state);
     const parent = document.getElementById(selector);
     parent.innerHTML = markup;
@@ -60,31 +64,3 @@ class ResultsContainer extends Observer {
     this.render(state, 'results-container');
   }
 }
-
-// A single result art Object.
-
-// const getsingleResultCardUI = (item) => {
-//   return `<div>${item.title}</div>`;
-
-// buildMarkup(state) {
-//   return `<li>
-//     <div class="card">
-//       <strong>${objectID.title}</strong><br>${objectID.objectID}<br>
-//       ${objectID.artistDisplayName}<br/>
-//       <img src=${objectID.primaryImageSmall} alt=${objectID.title} />
-//     </div>
-//     </li>`;
-// }
-
-// render(state, selector = 'results-container') {
-//   const markup = this.buildMarkup(state);
-//   const parent = document.getElementById(selector);
-//   parent.innerHTML = markup;
-// }
-
-// update(state) {
-//   this.render(state, '.result');
-// }
-// };
-
-// The active area of the art Object.
