@@ -2,6 +2,7 @@
 // https://medium.com/@asierr/back-to-basics-mastering-state-management-in-vanilla-javascript-e3be7377ac46
 // https://dev.to/parenttobias/a-simple-observer-in-vanilla-javascript-1m80
 // https://webdevstudios.com/2019/02/19/observable-pattern-in-javascript/
+// https://gist.github.com/efuller/6ca1739e5f4ea25b740d0fb0a7c91fa7#file-observer-js
 
 // Subject class.
 class Subject {

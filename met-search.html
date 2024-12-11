@@ -18,15 +18,14 @@
     <main>
       <div id="app" class="wrapper">
         <div id="search-area">
-          <form id="search-form" class="search" action="">
-            <label class="search-label" for="search"
-              >Search the MET collection
-            </label>
+          <form id="search-form" class="search" action="" role="search">
             <input
               id="search"
               class="search-input"
               type="search"
               placeholder="enter search term(s)..."
+              aria-label="Search for art in the MET museum collection"
+              size="10"
             />
             <input class="button" type="submit" value="Search" />
             <small id="error" role="alert" class="validate"></small>
