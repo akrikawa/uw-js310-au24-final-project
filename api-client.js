@@ -1,3 +1,4 @@
+// Documentation for API: https://metmuseum.github.io/
 // Objects: https://collectionapi.metmuseum.org/public/collection/v1/objects can add params like dept id */
 /* One object: https://collectionapi.metmuseum.org/public/collection/v1/objects/[objectID] */
 

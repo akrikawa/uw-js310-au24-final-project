@@ -38,11 +38,12 @@ appState.update({
 // Calls the api-client running the search endpoint.
 // Takes resultant objectIDs and stores them in application state.
 const searchAndStore = async (queryParams = 'degas') => {
-  clearErrorMessage();
   const state = appState.get();
+  clearErrorMessage();
   // Clear recent search results.
-  appState.update({ recentSearchResults: [] });
   appState.update({ metObjectDataToRender: [{}] });
+
+  // Try to get search results.
   await getSearchResults(queryParams).then((res) => {
     appState.update({
       recentSearchResults: res.objectIDs !== null ? res.objectIDs : [],
@@ -55,6 +56,11 @@ const searchAndStore = async (queryParams = 'degas') => {
         null /* If there are no objectIDs in the result, then we don't have anything. */,
     });
   });
+
+  // Clear any error messages if we have results.
+  if (state.haveSearchResults) {
+    clearErrorMessage();
+  }
   await pagerResults();
 };
 
@@ -62,6 +68,7 @@ const searchAndStore = async (queryParams = 'degas') => {
 // MET Object IDs. Stores the data in state.
 const pagerResults = async () => {
   clearErrorMessage();
+  // debugger;
   const state = appState.get();
   const start = state.pagerIndexStart;
   const end = state.pagerIndexEnd;
@@ -79,6 +86,7 @@ const pagerResults = async () => {
       // console.log(data);
       appState.update({
         metObjectDataToRender: cleanDataSet(data),
+        haveSearchResults: true,
         loading: false,
       });
       setPagers();
@@ -86,8 +94,9 @@ const pagerResults = async () => {
       showErrorMessage(e);
     }
   } else {
-    showErrorMessage(`No MET objects found for that search term(s).`);
     appState.update({ loading: false });
+    appState.update({ haveSearchResults: false });
+    showErrorMessage(`No MET objects found for that search term(s).`);
     console.log(
       "There aren't MET ObjectIDs to search for in state.recentSearchResults."
     );
@@ -95,7 +104,7 @@ const pagerResults = async () => {
 };
 
 const getSingleObjectData = async (objectID) => {
-  console.log(objectID);
+  // console.log(objectID);
   try {
     const response = await getObjectResults(objectID);
     return response;
@@ -116,11 +125,12 @@ const getBatchOfObjectData = async (objectIDRequests = []) => {
 
 // Utilities.
 const showErrorMessage = (error) => {
-  userMessages.classList.remove('hidden');
+  // debugger;
   // Check to see if there's already an error message in messages.
   if (!userMessages.hasChildNodes()) {
     const errorDivEl = document.createElement('div');
     errorDivEl.classList.add('alert', 'alert-error');
+    errorDivEl.setAttribute('role', 'alert');
     const innerPart = `<h2>Ah, snap. There was an error!</h2><p><em>"Art is human. Error is human. Art is error."</em><br>&mdash; David Bayles, Art and Fear</p>
     <ul id="error-list"><li>${error}</li></ul>`;
     errorDivEl.innerHTML = innerPart;
@@ -131,13 +141,14 @@ const showErrorMessage = (error) => {
     errorItem.innerText = error;
     errorListEl.appendChild(errorItem);
   }
+  userMessages.classList.remove('hidden');
 };
 
 const clearErrorMessage = () => {
-  if (userMessages.textContent === '') {
+  if (!userMessages.hasChildNodes()) {
     return;
   } else {
-    userMessages.textContent === '';
+    userMessages.innerHTML = '';
     userMessages.classList.add('hidden');
   }
 };
@@ -146,7 +157,7 @@ const clearErrorMessage = () => {
 // the data from the /object/ endpoint in the API, the result is undefined. This is somewhat of a
 // band-aid so that the other items in the pagerResults() can render and the app continues to function.
 const cleanDataSet = (objectIDsToRender) => {
-  console.log('before', objectIDsToRender);
+  // console.log('before', objectIDsToRender);
   objectIDsToRender.forEach((dataSet, i) => {
     if (dataSet === undefined) {
       console.log('yes');
@@ -157,7 +168,7 @@ const cleanDataSet = (objectIDsToRender) => {
       };
     }
   });
-  console.log('after', objectIDsToRender);
+  // console.log('after', objectIDsToRender);
   return objectIDsToRender;
 };
 
@@ -215,16 +226,18 @@ const validateFormField = (searchInput) => {
 // Set up listeners.
 searchForm.addEventListener('submit', (e) => {
   e.preventDefault();
+  clearErrorMessage();
   const searchInputHasData = validateFormField(searchInput);
   if (searchInputHasData) {
-    clearErrorMessage();
     searchElError = document.getElementById('error');
     searchElError.innerText = '';
-    // console.log('value', searchInput.value);
+    console.log('value', searchInput.value);
     const state = appState.get();
     appState.update({
       ...state,
-      recentSearchResults: [],
+      recentSearchResults: [
+        1,
+      ] /* Sets dummy item so result count returns something. This temporarily suppresses the error message for appearing momentarily. */,
     });
     searchAndStore(searchInput.value);
     pageAndRender('next');
@@ -258,28 +271,33 @@ pagerPrevButton.addEventListener('click', () => {
 });
 
 const pageAndRender = (direction) => {
+  // clearErrorMessage();
   const state = appState.get();
-  if (direction === 'next') {
-    appState.update({
-      pagerIndexStart: state.pagerIndexStart + state.pagerStep,
-      pagerIndexEnd: state.pagerIndexEnd + state.pagerStep,
-      currentFirstItemInView: state.currentFirstItemInView + state.pagerStep,
-      currentLastItemInView:
-        state.currentLastItemInView + state.pagerStep <=
-        state.recentSearchResults.length
-          ? state.currentLastItemInView + state.pagerStep
-          : state.recentSearchResults.length,
-    });
+  if (state.haveSearchResults) {
+    if (direction === 'next') {
+      appState.update({
+        pagerIndexStart: state.pagerIndexStart + state.pagerStep,
+        pagerIndexEnd: state.pagerIndexEnd + state.pagerStep,
+        currentFirstItemInView: state.currentFirstItemInView + state.pagerStep,
+        currentLastItemInView:
+          state.currentLastItemInView + state.pagerStep <=
+          state.recentSearchResults.length
+            ? state.currentLastItemInView + state.pagerStep
+            : state.recentSearchResults.length,
+      });
+    } else {
+      appState.update({
+        pagerIndexStart: state.pagerIndexStart - state.pagerStep,
+        pagerIndexEnd: state.pagerIndexEnd - state.pagerStep,
+        currentFirstItemInView:
+          state.currentFirstItemInView - state.pagerStep >= 0
+            ? state.currentFirstItemInView - state.pagerStep
+            : 0,
+        currentLastItemInView: state.currentLastItemInView - state.pagerStep,
+      });
+    }
+    pagerResults();
   } else {
-    appState.update({
-      pagerIndexStart: state.pagerIndexStart - state.pagerStep,
-      pagerIndexEnd: state.pagerIndexEnd - state.pagerStep,
-      currentFirstItemInView:
-        state.currentFirstItemInView - state.pagerStep >= 0
-          ? state.currentFirstItemInView - state.pagerStep
-          : 0,
-      currentLastItemInView: state.currentLastItemInView - state.pagerStep,
-    });
+    return false;
   }
-  pagerResults();
 };

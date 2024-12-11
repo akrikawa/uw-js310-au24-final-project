@@ -7,7 +7,13 @@
   </head>
   <body class="app">
     <header class="header">
-      <h1>Met museum and whatnot</h1>
+      <div class="logo">
+        <img
+          src="./img/met-art-finder-4000-logo.svg"
+          alt="met art finder 4000 logo"
+        />
+      </div>
+      <h1>Find art at The MET in NYC</h1>
     </header>
     <main>
       <div id="app" class="wrapper">
@@ -28,7 +34,7 @@
         </div>
         <div id="search-results">
           <div id="messages"></div>
-          <div id="counter">show counter here here</div>
+          <div id="counter" role="alert">show counter here here</div>
           <div id="pager-controls">
             <button id="prev" disabled>Previous</button>
             <select id="pager-step">
