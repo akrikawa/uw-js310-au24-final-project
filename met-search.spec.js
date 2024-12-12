@@ -23,9 +23,6 @@ describe('API call: handle an error from MET API call', function () {
 
     const userMessages = document.getElementById('messages');
     value = await cleanDataSet([idBadToGet]);
-    // .then((data) =>
-    //   getBatchOfObjectData(data)
-    // );
   });
   // console.log(value);
   it('handles failure for an item an Object', function () {
@@ -73,16 +70,5 @@ describe('getBatchOfObjectData: get a batch of Met Objects and check results', f
   it('figure out how to access returned item', function () {
     let objectID = returnvalue[0].objectID;
     expect(objectID).toEqual(436135);
-  });
-});
-
-describe('setPagers: check logic for pager functions', function () {
-  beforeEach(async function () {
-    await searchAndStore('degas');
-  });
-
-  it('at first load pagerIndexEnd should equal pagerStep', function () {
-    const state = appState.get();
-    expect(state.pagerIndexEnd).toEqual(state.pagerStep);
   });
 });

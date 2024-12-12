@@ -22,7 +22,7 @@ appState.update({
   currentLastItemInView: 0,
   currentFirstItemInView: 0,
   metObjectDataToRender: [],
-  loadingResults: false,
+  loading: false,
   haveSearchResults: false,
   searchTerms: '',
 });
@@ -41,6 +41,8 @@ const searchAndStore = async (queryParams = 'degas') => {
   clearErrorMessage();
   // Clear recent search results.
   appState.update({ metObjectDataToRender: [{}] });
+  // We're planning to load items.
+  appState.update({ loading: true });
 
   // Try to get search results.
   await getSearchResults(queryParams).then((res) => {
@@ -97,6 +99,9 @@ const pagerResults = async () => {
       setPagers();
       // Also update the document title.
       document.title = `Search results for ${state.searchTerms} | MET Art finder 4000`;
+      // Scroll to form. In cases where the next button is hit or the pager select is changed,
+      // we should bring user back up to top. The top of search results may be better. Will explore in future.
+      searchForm.scrollIntoView();
     } catch (e) {
       showErrorMessage(e);
     }
@@ -185,7 +190,7 @@ const showErrorMessage = (error) => {
     // There's nothing in the #messages div right now. So, build out some
     // markup to insert into it.
     const errorDivEl = document.createElement('div');
-    errorDivEl.classList.add('alert', 'alert-error');
+    errorDivEl.classList.add('alert', 'alert-error', 'fade-in');
     errorDivEl.setAttribute('role', 'alert');
     // Build the guts of it and provide the <li> for the error.
     const innerPart = `<h2>Ah, snap. There was an error!</h2><p><em>"Art is human. Error is human. Art is error."</em><br>&mdash; David Bayles, Art and Fear</p>

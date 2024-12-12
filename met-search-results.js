@@ -52,12 +52,12 @@ class ResultsContainer extends Observer {
       return `<div class="loading-results"><img src="./img/met-art-finder-4000-spinner.svg" alt="loading results..."></div>`;
     } else if (state.haveSearchResults) {
       // We have search results. Work on displaying the results.
-      return `<h2>Search results for ${
+      return `<h2 class="fade-in">Search results for ${
         state.searchTerms
       }</h2><ul class="current-result-set-container">${state.metObjectDataToRender
         .map(
           (metObject) =>
-            `<li class="result" id=${metObject.objectID}>
+            `<li class="result fade-in" id=${metObject.objectID}>
               <div class="card">
                 <img src=${
                   metObject.isPublicDomain

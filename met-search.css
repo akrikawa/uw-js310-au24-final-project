@@ -55,7 +55,7 @@ body {
 
 /* Component - #counter area */
 #counter {
-  min-height: 24px;
+  height: 24px;
   text-align: center;
   p {
     margin: 0;
@@ -72,19 +72,24 @@ body {
     text-align: center;
     grid-row: 1/2;
   }
+
   label {
-    grid-column: 2/3;
+    grid-column: 1/4;
   }
+
   #pager-step {
     grid-row: 2/3;
   }
+
   #prev, #next {grid-row: 2/3;}
 }
 
 /* Things inside the Results area. */
 #results-container {
   margin-bottom: 2em;
+  min-height: 50vh;
 }
+
 ul {
   &.current-result-set-container {
   padding: 2rem;
@@ -111,8 +116,8 @@ ul {
   hr {
     border: 0;
     height: 1px;
-    background-color: var(--gray-medium);
-    margin: 1em 0;
+    background-color: var(--gray-light);
+    margin: 0.25em 0;
   }
   .card {
     display: grid;
@@ -120,7 +125,7 @@ ul {
     img {
       grid-row: 1/2;
       width: 100%;
-      height: 300px;
+      height: 250px;
       object-fit: contain;
       object-position: top;
       background-color: var(--gray-lighter);
@@ -230,6 +235,7 @@ input.button {
 }
 
 input, button, select, a.btn {
+  transition: all 300ms;
   &:focus {
     border-radius: 0;
     outline-offset: 3px;
@@ -238,9 +244,15 @@ input, button, select, a.btn {
 }
 
 input[type=submit], button, select, a.btn {
-  &:focus {
+  &:focus, &:hover {
     background-color: var(--primary-accent-color);
     color: var(--white);
+  }
+}
+
+input[type=submit], button {
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -249,7 +261,6 @@ select {
   border-radius: 0;
 }
 
-/* select:hover,  */
 select:active {
   border-color: var(--primary-color);
 }
@@ -337,5 +348,44 @@ input:invalid {
 
   #pager-controls {
     grid-template-columns: 2fr 1fr 2fr;
+  }
+}
+
+/* Animation definitions */
+/* Classes */
+.fade-in {
+  display: block;
+  animation: fade-in 0.5s ease-in forwards;
+  &.result {
+    display: grid;
+  }
+}
+
+.fade-out {
+  animation: fade-out 0.5s ease-out forwards;
+}
+
+/* Keyframes */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    display: none;
+  }
+
+  100% {
+    opacity: 1;
+    display: grid;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+    display: grid;
+  }
+
+  100% {
+    opacity: 0;
+    display: none;
   }
 }
