@@ -1,38 +1,60 @@
-// The search counter component.
+// ========================================
+// VIEW / COMPONENTS USING OBSERVER PATTERN
+// ========================================
+
+// The search counter component. This renders and updates the message above
+// the search results indicating where in the set of results the current view is
+// displaying.
 class SearchCounter extends Observer {
+  // Builds the markup for the component, taking in the state, which provides
+  // access to the state's data (variables).
   buildMarkup(state) {
+    // If we have data to render and we're not currently loadint then create
+    // markup with information.
     if (state.metObjectDataToRender.length > 0 && !state.loading) {
       let total = state.recentSearchResults.length;
-      return `<p>Viewing ${state.currentFirstItemInView + 1} through ${
+      return `<p>Viewing <strong>${
+        state.currentFirstItemInView + 1
+      }</strong> through <strong>${
         state.currentLastItemInView
-      } of <strong>${total}</strong> results found. </p>`;
+      }</strong> of <strong>${total}</strong> results found for <strong>${
+        state.searchTerms
+      }</strong>.</p>`;
+      // If we don't have data or state is loading, return empty string.
     } else {
       return ``;
     }
   }
 
+  // Takes the state and selector passed in and uses innerHTML on the selector's parent to inject
+  // the markup that's created with buildMarkup().
   render(state, selector = 'search-results') {
     const markup = this.buildMarkup(state);
     const parent = document.getElementById(selector);
     parent.innerHTML = markup;
   }
 
+  // When state updates, this gets called because SearchCounter is subscribed
+  // to observe state. This passes the selector for the component we want
+  // to update into the render() function. In this case 'counter'.
   update(state) {
     this.render(state, 'counter');
   }
 }
 
-// The search results component area.
+// The search results component area. This sets up the container, a <ul> and then iterates
+// through the result set of state.metObjectDataToRender to build each result. These are
+// <li>s that are visually represented as cards.
 class ResultsContainer extends Observer {
   buildMarkup(state) {
-    // console.log(
-    //   'Inside ResultsContainer and buildMarkup has been called: ',
-    //   state.metObjectDataToRender
-    // );
+    // If state is loading, show the spinner.
     if (state.loading) {
-      return `<div class="loading-results"><img src="./img/met-art-finder-4000-spinner.svg"></div>`;
+      return `<div class="loading-results"><img src="./img/met-art-finder-4000-spinner.svg" alt="loading results..."></div>`;
     } else if (state.haveSearchResults) {
-      return `<ul class="current-result-set-container">${state.metObjectDataToRender
+      // We have search results. Work on displaying the results.
+      return `<h2>Search results for ${
+        state.searchTerms
+      }</h2><ul class="current-result-set-container">${state.metObjectDataToRender
         .map(
           (metObject) =>
             `<li class="result" id=${metObject.objectID}>
@@ -93,15 +115,23 @@ class ResultsContainer extends Observer {
         .join('\n')}
     </ul>`;
     } else {
+      // We aren't loading and we don't have anything to show, so likely the search term didn't
+      // turn anything up or we're at the beginning and a search hasn't happened yet.
       return `<div class="no-results"><p>Use the search above to see results</p></div>`;
     }
   }
+
+  // Takes the state and selector passed in and uses innerHTML on the selector's parent to inject
+  // the markup that's created with buildMarkup().
   render(state, selector = 'search-results') {
     const markup = this.buildMarkup(state);
     const parent = document.getElementById(selector);
     parent.innerHTML = markup;
   }
 
+  // When state updates, this gets called because ResultsContainer is subscribed
+  // to observe state. This passes the selector for the component we want
+  // to update into the render() function. In this case 'results-container'.
   update(state) {
     this.render(state, 'results-container');
   }

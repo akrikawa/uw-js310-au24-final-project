@@ -34,9 +34,11 @@
         <div id="search-results">
           <div id="messages"></div>
           <div id="counter" role="alert">show counter here here</div>
+          <div id="results-container">Show the results here</div>
           <div id="pager-controls">
             <button id="prev" disabled>Previous</button>
-            <select id="pager-step">
+            <label for="pager-step">Number of results to view at a time</label>
+            <select id="pager-step" disabled>
               <option name="5" value="5" selected>5</option>
               <option name="10" value="10">10</option>
               <option name="25" value="25">25</option>
@@ -45,9 +47,7 @@
             </select>
             <button id="next" disabled>Next</button>
           </div>
-          <div id="results-container">Show the results here</div>
         </div>
-        <div id="favorites"></div>
       </div>
     </main>
     <script src="./met-state.js"></script>

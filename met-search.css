@@ -1,11 +1,12 @@
-/* Simple built-by-scratch framework stuff */
+/* This is all built-by-scratch. Bespoke. No framework stuff. */
+
 /* Typography imported from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
-/* Sets up base variables. Color palette for one. */
+/* Sets up base variables. Color palette, in this case. */
 :root { 
   --primary-color: #820933;
-  --primary-accent-color: #D84797;
+  --primary-accent-color: #D3318A;
   --secondary-color: #D2FDFF;
   --secondary-accent-color-blue: #3ABEFF;
   --secondary-accent-color-seafoam: #26FFE6;
@@ -17,6 +18,7 @@
   --gray-dark: #212121;
 }
 
+/* Structure */
 body {
   margin: 0;
   padding: 0;
@@ -33,6 +35,7 @@ body {
   background-color: var(--black);
   text-align: left;
   h1 {
+    font-weight: normal;
     padding-left: 1em;
     font-size: 1em;
     color: #ffffff;
@@ -50,6 +53,7 @@ body {
   font-family: 'Poppins', Helvetica, sans-serif;
 }
 
+/* Component - #counter area */
 #counter {
   min-height: 24px;
   text-align: center;
@@ -58,15 +62,29 @@ body {
   }
 }
 
+/* Component - #pager-controls area */
 #pager-controls {
-  margin: 1em 0 2em 0;
   display: grid;
-  grid-template-columns: 5fr 1fr 5fr;
+  grid-gap: 0.5em;
+  margin: 1em 0 2em 0;
+  grid-template-columns: 1fr 1fr 1fr;
+  label {
+    text-align: center;
+    grid-row: 1/2;
+  }
+  label {
+    grid-column: 2/3;
+  }
+  #pager-step {
+    grid-row: 2/3;
+  }
+  #prev, #next {grid-row: 2/3;}
 }
 
-
-
-/* Results area. */
+/* Things inside the Results area. */
+#results-container {
+  margin-bottom: 2em;
+}
 ul {
   &.current-result-set-container {
   padding: 2rem;
@@ -79,6 +97,7 @@ ul {
   word-wrap: break-word;
 }
 
+/* Component - the result card for a MET object. */
 .result {
   display: grid;
   grid-template-rows: subgrid;
@@ -133,14 +152,16 @@ ul {
   }
 }
 
+/* Results area state indicators. */
 .no-results {
   text-align: center;
 }
 
 .loading-results {
   text-align: center;
+  margin-top: 2em;
   img {
-    max-width: 30vw;
+    max-width: 75vw;
   }
 }
 
@@ -166,19 +187,22 @@ input, select {
   outline: 0;
   border: 1px solid;
 }
-
+select {
+  text-align: center;
+}
 input[type=search] {
   padding: 0.5em; 
   font-size: 1.5em;
   max-width: 100%;
 }
 
+select,
 input.button, 
 button, 
 a.btn {
   border-radius: 0;
   border-width: 1px;
-  padding: 0.75em;
+  padding: 0.5em;
   font-size: 1em;
   font-family: 'Poppins', Helvetica, sans-serif;
   font-weight: 600;
@@ -186,10 +210,12 @@ a.btn {
   color: var(--primary-accent-color);
   background-color: var(--white);
 }
+
 a.btn {
   margin: 0.5em 0;
   display: block;
   text-align: center;
+  text-decoration: none;
 }
 
 input.button {
@@ -197,7 +223,7 @@ input.button {
   font-size: 1.5em;
 }
 
-*:disabled {
+*:disabled, select:disabled {
   background-color: rgb(229, 228, 228);
   border-color: rgb(152, 151, 151);
   color: #5d5d5d;
@@ -211,7 +237,7 @@ input, button, select, a.btn {
   }
 }
 
-input[type=submit], button, a.btn {
+input[type=submit], button, select, a.btn {
   &:focus {
     background-color: var(--primary-accent-color);
     color: var(--white);
@@ -221,10 +247,9 @@ input[type=submit], button, a.btn {
 select {
   padding: 1em; 
   border-radius: 0;
-  margin: 0 1em;
 }
 
-select:hover, 
+/* select:hover,  */
 select:active {
   border-color: var(--primary-color);
 }
@@ -253,6 +278,7 @@ input:invalid {
   }
 }
 
+/* The tweener land that's always hard to nail down. Basically, in-between and desktop */
 @media screen and (min-width: 750px) {
   .header {
     h1 {
@@ -260,24 +286,36 @@ input:invalid {
     }
   }
   .wrapper {
-    padding: 2em 4em;
+    padding: 2em 3em;
   }
 
   .search {
     grid-template-columns: 3fr 1fr;
   }
+
+  .loading-results {
+    margin-top: 2em;
+    img {
+      max-width: 30vw;
+    }
+  }
+
+  #pager-controls {
+    grid-template-columns: 3fr 1fr 3fr;
+  }
 }
 
+/* Responsive - a bit bigger than phone. */
 @media screen and (min-width: 625px) {
   .header {
     grid-template-columns: 1fr 4fr;
     h1 {
-      font-size: 1.5em;
+      font-size: 2em;
     }
   }
 
   .wrapper {
-    padding: 2em 4em;
+    padding: 2em;
   }
 
   /* Form styles. */
@@ -286,7 +324,18 @@ input:invalid {
   }
 
   .validate {
-    grid-column: 2/3;
+    grid-column: 1/2;
     color: var(--primary-accent-color);
+  }
+
+  .loading-results {
+    margin-top: 1.5em;
+    img {
+      max-width: 45vw;
+    }
+  }
+
+  #pager-controls {
+    grid-template-columns: 2fr 1fr 2fr;
   }
 }
